@@ -22,7 +22,6 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 
   if (!url.searchParams.has("c")) {
     url.searchParams.set("c", request.geo.country || "GB");
-    return NextResponse.redirect(url.toString());
+    return NextResponse.redirect(url);
   }
-  return NextResponse.next();
 }
