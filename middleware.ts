@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 
 import type { NextFetchEvent, NextRequest } from "next/server";
 
+export const config = {
+  matcher: "/single**",
+};
+
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
   console.log(process.env.NEXT_PUBLIC_FACEBOOK_APP_ID);
 
