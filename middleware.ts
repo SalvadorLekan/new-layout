@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextFetchEvent, NextRequest } from "next/server";
 
 export const config = {
-  matcher: "/(single.*)",
+  matcher: "/(properties.*)",
 };
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
@@ -11,21 +11,30 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 
   const url = request.nextUrl;
 
-  // if (url.pathname.startsWith("/properties") && !url.searchParams.has("c")) {
+  // if (url.pathname.startsWith("/properties") && !url.searchParams.has("countryCode")) {
   //   let countries = [];
-  //   await fetch("https://tas-back.herokuapp.com/countries")
-  //     .then((res) => res.json())
-  //     .then((data) => (countries = data.map((country) => country.countryCode)))
-  //     .catch((err) => console.log(err));
+
   //   console.log(countries);
 
-  //   url.searchParams.set("c", "viewport");
+  //   url.searchParams.set("countryCode", "viewport");
   //   console.log(url.toString());
   //   return NextResponse.redirect(url.toString());
   // }
 
-  if (!url.searchParams.has("c")) {
-    url.searchParams.set("c", request.geo.country || "GB");
+  if (!url.searchParams.has("countryCode")) {
+    let country = request.geo.country;
+    if (country) {
+      await fetch(`https://tas-back.herokuapp.com/${country}`)
+        .then((res) => {
+          if (!res.ok) {
+            country = "GB";
+          }
+        })
+        .catch(() => {
+          country = "GB";
+        });
+    }
+    url.searchParams.set("countryCode", country || "GB");
     return NextResponse.redirect(url);
   }
 }
